@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Signaling Test</title>
+</head>
+<body>
+  <h1>WebRTC Signaling Test</h1>
+
+  <label>Your ID: <input type="text" id="userId" /></label>
+  <button id="connectBtn">Connect</button>
+
+  <br><br>
+
+  <label>Send To ID: <input type="text" id="targetId" /></label>
+  <input type="text" id="messageInput" placeholder="Message JSON" />
+  <button id="sendBtn">Send Message</button>
+
+  <pre id="log"></pre>
+
+  <script>
+    let ws;
+
+    const log = (msg) => {
+      document.getElementById("log").textContent += msg + "\n";
+      console.log(msg);
+    }
+
+    document.getElementById("connectBtn").onclick = () => {
+      const userId = document.getElementById("userId").value;
+      if (!userId) return alert("Enter your ID first");
+
+      ws = new WebSocket("ws://localhost:8000/ws/signaling-server/");
+
+      ws.onopen = () => {
+        log("Connected!");
+        ws.send(JSON.stringify({ type: "register", id: userId }));
+        log(`Registered as ${userId}`);
+      };
+
+      ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        log("Received: " + JSON.stringify(data));
+      };
+
+      ws.onclose = () => log("Disconnected.");
+      ws.onerror = (err) => log("Error: " + err);
+    }
+
+    document.getElementById("sendBtn").onclick = () => {
+      const targetId = document.getElementById("targetId").value;
+      let msg = document.getElementById("messageInput").value;
+      if (!targetId || !msg) return alert("Enter target ID and message");
+
+      try {
+        msg = JSON.parse(msg);
+      } catch (e) {
+        return alert("Message must be valid JSON");
+      }
+
+      ws.send(JSON.stringify({ to: targetId, ...msg }));
+      log(`Sent to ${targetId}: ${JSON.stringify(msg)}`);
+    }
+  </script>
+</body>
+</html>
