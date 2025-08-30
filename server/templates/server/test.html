@@ -30,7 +30,7 @@
       const userId = document.getElementById("userId").value;
       if (!userId) return alert("Enter your ID first");
 
-      ws = new WebSocket("wss://https://callingserver-5c0z.onrender.com/ws/signaling-server/");
+      ws = new WebSocket("wss://callingserver-5c0z.onrender.com/ws/signaling-server/");
 
       ws.onopen = () => {
         log("Connected!");
