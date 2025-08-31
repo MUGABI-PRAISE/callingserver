@@ -63,14 +63,6 @@ TEMPLATES = [
 # ASGI (Daphne will be the entrypoint)
 ASGI_APPLICATION = "callserver.asgi.application"
 
-# Database (SQLite for now – simple for Render free tier)
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
-}
-
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
@@ -96,4 +88,19 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels.layers.InMemoryChannelLayer",
     },
+}
+
+#databases
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'railway',
+        'USER': 'root',
+        'PASSWORD': 'pSIrkOpsByBbRRsSBYxpayKdMhaENWXW',
+        'HOST': 'gondola.proxy.rlwy.net',
+        'PORT': '39124',
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        },
+    }
 }

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>WebSocket Test</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    #messages { border: 1px solid #ccc; height: 300px; overflow-y: scroll; padding: 10px; }
+    #messages div { margin-bottom: 8px; }
+    input, button { margin-top: 5px; }
+  </style>
+</head>
+<body>
+
+<h2>Chat Consumer Test</h2>
+<label>User ID: <input type="number" id="userId" value="1" /></label><br>
+<label>Message: <input type="text" id="messageInput" /></label>
+<button onclick="sendMessage()">Send</button>
+
+<div id="messages"></div>
+
+<script>
+  const userId = document.getElementById('userId').value;
+  const wsUrl = `ws://${window.location.host}/ws/chat/?user_id=${userId}`;
+  const socket = new WebSocket(wsUrl);
+
+  const messagesDiv = document.getElementById('messages');
+
+  socket.onopen = () => {
+    addMessage('✅ Connected to ChatConsumer');
+  };
+
+  socket.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+    addMessage('📩 ' + JSON.stringify(data));
+  };
+
+  socket.onclose = () => {
+    addMessage('❌ Disconnected');
+  };
+
+  socket.onerror = (err) => {
+    addMessage('⚠️ Error: ' + err.message);
+  };
+
+  function sendMessage() {
+    const message = document.getElementById('messageInput').value;
+    if (!message) return;
+    const payload = {
+      type: 'message',
+      to: 2,       // example recipient ID
+      content: message
+    };
+    socket.send(JSON.stringify(payload));
+    addMessage('➡️ Sent: ' + JSON.stringify(payload));
+  }
+
+  function addMessage(msg) {
+    const div = document.createElement('div');
+    div.textContent = msg;
+    messagesDiv.appendChild(div);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  }
+</script>
+
+</body>
+</html>
