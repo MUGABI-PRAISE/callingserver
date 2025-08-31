@@ -21,7 +21,7 @@
 
 <script>
   const userId = document.getElementById('userId').value;
-  const wsUrl = `wss://${window.location.host}/ws/chat/?user_id=${userId}`;
+  const wsUrl = `wss://callingserver-5c0z.onrender.com/ws/chat/?user_id=${userId}`;
   const socket = new WebSocket(wsUrl);
 
   const messagesDiv = document.getElementById('messages');
